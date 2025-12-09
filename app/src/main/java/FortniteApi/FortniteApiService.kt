@@ -1,0 +1,15 @@
+package FortniteApi
+
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+interface FortniteApiService {
+
+    @GET("v2/news/br")
+    fun getNews(
+        @Query("language") language: String = "es"
+    ): Call<FortniteResponse>
+
+
+}
