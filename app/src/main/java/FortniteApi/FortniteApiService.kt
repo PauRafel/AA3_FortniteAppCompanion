@@ -11,5 +11,9 @@ interface FortniteApiService {
         @Query("language") language: String = "en"
     ): Call<FortniteResponse>
 
+    @GET("v2/shop")
+    fun getShop(
+        @Query("language") language: String = "en"
+    ): Call<FortniteShopResponse>
 
 }
