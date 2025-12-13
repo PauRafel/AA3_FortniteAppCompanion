@@ -96,6 +96,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this) {task->
             if(task.isSuccessful){
                 clearError()
+                startActivity(Intent(this, NewsActivity::class.java))
             }else{
                 showError("The email or password are incorrect")
             }
@@ -118,6 +119,7 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 clearError()
                 showRegister("Register successful")
+                startActivity(Intent(this, NewsActivity::class.java))
             } else {
                 showError("It already exist a user with this email")
                 clearRegister()
