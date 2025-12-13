@@ -8,7 +8,7 @@ interface FortniteApiService {
 
     @GET("v2/news/br")
     fun getNews(
-        @Query("language") language: String = "es"
+        @Query("language") language: String = "en"
     ): Call<FortniteResponse>
 
 
