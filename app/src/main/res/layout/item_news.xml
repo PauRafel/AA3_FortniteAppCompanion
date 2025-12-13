@@ -8,11 +8,7 @@
     android:layout_marginEnd="12dp"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground">
+    app:cardCornerRadius="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,8 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:scaleType="centerCrop"
-            android:background="#E0E0E0"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            android:background="#E0E0E0" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,8 +32,9 @@
                 android:id="@+id/textTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
+                android:fontFamily="@font/fortnitefont"
                 android:textColor="#212121"
                 android:lineSpacingExtra="2dp" />
 
@@ -47,7 +43,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
+                android:fontFamily="@font/fortnitefont"
                 android:textColor="#757575"
                 android:lineSpacingExtra="2dp"
                 android:maxLines="3"

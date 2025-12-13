@@ -31,3 +31,4 @@ data class NewsMessage(
     val image: String,
     val adspace: String
 )
+
