@@ -31,7 +31,6 @@ class NewsAdapter(private var newsList: List<NewsItem>) :
         holder.titleView.text = newsItem.title
         holder.bodyView.text = newsItem.body
 
-        // Cargar imagen con Glide
         Glide.with(holder.itemView.context)
             .load(newsItem.image)
             .diskCacheStrategy(DiskCacheStrategy.ALL)

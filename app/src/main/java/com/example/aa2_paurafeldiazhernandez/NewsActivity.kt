@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import FortniteApi.FortniteApiInstance
 import FortniteApi.FortniteResponse
+import android.content.Intent
 import androidx.appcompat.widget.Toolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,6 +37,7 @@ class NewsActivity : AppCompatActivity() {
         recyclerView.visibility = View.GONE
 
         fetchFortniteNews()
+
     }
 
     private fun fetchFortniteNews() {
@@ -81,10 +84,5 @@ class NewsActivity : AppCompatActivity() {
                 ).show()
             }
         })
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
     }
 }
