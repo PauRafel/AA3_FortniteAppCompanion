@@ -1,5 +1,6 @@
 package com.example.aa2_paurafeldiazhernandez
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import FortniteApi.ShopEntry
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 
 class ShopAdapter(private var shopList: List<ShopEntry>) :
@@ -16,7 +18,6 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
         val imageView: ImageView = view.findViewById(R.id.imageShopItem)
         val nameView: TextView = view.findViewById(R.id.textItemName)
         val priceView: TextView = view.findViewById(R.id.textPrice)
-        val rarityView: TextView = view.findViewById(R.id.textRarity)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopViewHolder {
@@ -28,19 +29,18 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
     override fun onBindViewHolder(holder: ShopViewHolder, position: Int) {
         val shopEntry = shopList[position]
 
-        // Obtener el primer item del bundle
         val item = shopEntry.brItems?.firstOrNull()
 
-        // Nombre del item
         holder.nameView.text = item?.name ?: shopEntry.devName
 
-        // Precio
-        holder.priceView.text = "${shopEntry.finalPrice} V-Bucks"
+        holder.priceView.text = "${shopEntry.finalPrice}"
 
-        // Raridad
-        holder.rarityView.text = item?.rarity?.displayValue ?: "Unknown"
+        val rarityValue = item?.rarity?.value ?: "common"
 
-        // Cargar imagen
+        val rarityColorRes = getRarityColor(rarityValue)
+        val rarityColor = ContextCompat.getColor(holder.itemView.context, rarityColorRes)
+        holder.imageView.setBackgroundColor(rarityColor)
+
         val imageUrl = item?.images?.icon
             ?: item?.images?.featured
             ?: shopEntry.newDisplayAsset?.images?.get("Background")
@@ -61,7 +61,28 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
     override fun getItemCount(): Int = shopList.size
 
     fun updateShop(newShop: List<ShopEntry>) {
-        shopList = newShop
+        shopList = newShop.filter { entry ->
+            val item = entry.brItems?.firstOrNull()
+            val hasImage = item?.images?.featured != null
+            hasImage
+        }
         notifyDataSetChanged()
+    }
+
+    private fun getRarityColor(rarity: String): Int {
+        return when (rarity.lowercase()) {
+            "common" -> R.color.rarity_common
+            "uncommon" -> R.color.rarity_uncommon
+            "rare" -> R.color.rarity_rare
+            "epic" -> R.color.rarity_epic
+            "legendary" -> R.color.rarity_legendary
+            "mythic" -> R.color.rarity_mythic
+            "exotic" -> R.color.rarity_exotic
+            "transcendent" -> R.color.rarity_transcendent
+            "marvel" -> R.color.rarity_marvel
+            "dc", "gaminglegends", "icon", "starwars",
+            "frozen", "lava", "shadow", "dark" -> R.color.rarity_series
+            else -> R.color.rarity_default
+        }
     }
 }
