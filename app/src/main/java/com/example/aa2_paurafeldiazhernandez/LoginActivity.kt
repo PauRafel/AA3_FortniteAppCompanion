@@ -82,6 +82,7 @@ class LoginActivity : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             if(task.isSuccessful){
                 val account = task.getResult(ApiException::class.java)
+                startActivity(Intent(this, HomeActivity::class.java))
             }
         }
     }
@@ -96,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this) {task->
             if(task.isSuccessful){
                 clearError()
-                startActivity(Intent(this, NewsActivity::class.java))
+                startActivity(Intent(this, HomeActivity::class.java))
             }else{
                 showError("The email or password are incorrect")
             }
@@ -119,7 +120,7 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 clearError()
                 showRegister("Register successful")
-                startActivity(Intent(this, NewsActivity::class.java))
+                startActivity(Intent(this, HomeActivity::class.java))
             } else {
                 showError("It already exist a user with this email")
                 clearRegister()

@@ -12,37 +12,44 @@ import androidx.recyclerview.widget.RecyclerView
 import FortniteApi.FortniteApiInstance
 import FortniteApi.FortniteShopResponse
 import android.content.Intent
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ShopActivity : AppCompatActivity() {
+class ShopActivity : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ShopAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_shop)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.activity_shop, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        recyclerView = view.findViewById(R.id.recyclerViewShop)
 
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-
-        recyclerView = findViewById(R.id.recyclerViewShop)
-
-
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(),2 )
         adapter = ShopAdapter(emptyList())
         recyclerView.adapter = adapter
 
 
         recyclerView.visibility = View.GONE
 
-        fetchShop()
 
+        fetchShop()
     }
 
     private fun fetchShop() {
@@ -58,38 +65,15 @@ class ShopActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val shopEntries = response.body()?.data?.entries ?: emptyList()
 
-                    if (shopEntries.isEmpty()) {
-                        Toast.makeText(
-                            this@ShopActivity,
-                            "No hay items en la tienda",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
+                    if (shopEntries.isNotEmpty()) {
                         adapter.updateShop(shopEntries)
-
-                        Toast.makeText(
-                            this@ShopActivity,
-                            "${shopEntries.size} items cargados",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
-                } else {
-                    Toast.makeText(
-                        this@ShopActivity,
-                        "Error al cargar tienda: ${response.code()}",
-                        Toast.LENGTH_LONG
-                    ).show()
+
                 }
             }
 
             override fun onFailure(call: Call<FortniteShopResponse>, t: Throwable) {
                 recyclerView.visibility = View.VISIBLE
-
-                Toast.makeText(
-                    this@ShopActivity,
-                    "Error de conexión: ${t.message}",
-                    Toast.LENGTH_LONG
-                ).show()
             }
         })
     }

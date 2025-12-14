@@ -18,10 +18,7 @@
             android:id="@+id/imageShopItem"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="ShopItem"
-            android:background="#E0E0E0"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            android:background="#E0E0E0" />
 
 
         <LinearLayout
@@ -40,8 +37,7 @@
                 android:textStyle="bold"
                 android:textColor="#212121"
                 android:maxLines="2"
-                android:ellipsize="end"
-                tools:text="Drift" />
+                tools:text="..." />
 
 
             <TextView
@@ -52,7 +48,7 @@
                 android:textSize="12sp"
                 android:textColor="#757575"
                 android:textAllCaps="true"
-                tools:text="Legendary" />
+                tools:text="..." />
 
             <!-- Precio -->
             <LinearLayout
@@ -65,9 +61,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@android:drawable/star_big_on"
-                    android:contentDescription="V-Bucks"
-                    app:tint="#FFD700" />
+                    android:src="@drawable/vbucks" />
 
                 <TextView
                     android:id="@+id/textPrice"
@@ -76,8 +70,7 @@
                     android:layout_marginStart="4dp"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="#0078F2"
-                    tools:text="1500 V-Bucks" />
+                    android:textColor="#0078F2" />
 
             </LinearLayout>
 

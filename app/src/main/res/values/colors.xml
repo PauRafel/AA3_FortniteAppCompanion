@@ -3,4 +3,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple">#481973</color>
+    <color name="rarity_common">#B0B0B0</color>
+    <color name="rarity_uncommon">#5DBB3C</color>
+    <color name="rarity_rare">#3F7FBF</color>
+    <color name="rarity_epic">#B251D1</color>
+    <color name="rarity_legendary">#F5A623</color>
+    <color name="rarity_mythic">#FFD700</color>
+    <color name="rarity_exotic">#1EEAEF</color>
+    <color name="rarity_transcendent">#D32E40</color>
+    <color name="rarity_marvel">#D32E40</color>
+    <color name="rarity_series">#54FFFF</color>
+    <color name="rarity_default">#9E9E9E</color>
 </resources>

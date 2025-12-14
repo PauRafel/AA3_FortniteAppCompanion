@@ -10,34 +10,41 @@ import androidx.recyclerview.widget.RecyclerView
 import FortniteApi.FortniteApiInstance
 import FortniteApi.FortniteResponse
 import android.content.Intent
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NewsActivity : AppCompatActivity() {
+class NewsActivity : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NewsAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_news)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.activity_news, container, false)
+    }
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = findViewById(R.id.recyclerViewNews)
+        recyclerView = view.findViewById(R.id.recyclerViewNews)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = NewsAdapter(emptyList())
         recyclerView.adapter = adapter
 
         recyclerView.visibility = View.GONE
 
-        fetchFortniteNews()
 
+        fetchFortniteNews()
     }
 
     private fun fetchFortniteNews() {
@@ -55,33 +62,14 @@ class NewsActivity : AppCompatActivity() {
 
                     val visibleNews = newsItems.filter { !it.hidden }
 
-                    if (visibleNews.isEmpty()) {
-                        Toast.makeText(
-                            this@NewsActivity,
-                            "No hay noticias disponibles",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        // Actualizar adapter
+                    if (visibleNews.isNotEmpty()) {
                         adapter.updateNews(visibleNews)
                     }
-                } else {
-                    Toast.makeText(
-                        this@NewsActivity,
-                        "Error al cargar noticias: ${response.code()}",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<FortniteResponse>, t: Throwable) {
                 recyclerView.visibility = View.VISIBLE
-
-                Toast.makeText(
-                    this@NewsActivity,
-                    "Error de conexión: ${t.message}",
-                    Toast.LENGTH_LONG
-                ).show()
             }
         })
     }
