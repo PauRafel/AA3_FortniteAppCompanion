@@ -40,6 +40,11 @@ class HomeActivity : AppCompatActivity() {
                     loadFragment(ShopActivity())
                     true
                 }
+                R.id.navigation_profile -> {
+                    supportActionBar?.title = "Profile"
+                    loadFragment(ProfileActivity())
+                    true
+                }
                 else -> false
             }
         }
