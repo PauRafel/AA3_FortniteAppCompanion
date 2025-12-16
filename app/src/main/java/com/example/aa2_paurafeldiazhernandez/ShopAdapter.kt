@@ -1,18 +1,25 @@
 package com.example.aa2_paurafeldiazhernandez
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import FortniteApi.ShopEntry
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ShopAdapter(private var shopList: List<ShopEntry>) :
     RecyclerView.Adapter<ShopAdapter.ShopViewHolder>() {
+
+    private var allItems: List<ShopEntry> = emptyList()
+
+    enum class SortType {
+        DATE, RARITY, PRICE
+    }
 
     class ShopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imageShopItem)
@@ -41,9 +48,11 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
         val rarityColor = ContextCompat.getColor(holder.itemView.context, rarityColorRes)
         holder.imageView.setBackgroundColor(rarityColor)
 
-        val imageUrl = item?.images?.icon
-            ?: item?.images?.featured
+        val imageUrl = item?.images?.featured
+            ?: item?.images?.icon
+            ?: shopEntry.newDisplayAsset?.images?.get("OfferImage")
             ?: shopEntry.newDisplayAsset?.images?.get("Background")
+            ?: shopEntry.bundle?.image
             ?: ""
 
         if (imageUrl.isNotEmpty()) {
@@ -51,22 +60,59 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground)
-                .centerCrop()
+                .fitCenter()
                 .into(holder.imageView)
         } else {
-            holder.imageView.setImageResource(R.drawable.ic_launcher_background)
+            holder.imageView.setImageResource(R.drawable.vbucks)
+            holder.imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
     }
 
     override fun getItemCount(): Int = shopList.size
 
     fun updateShop(newShop: List<ShopEntry>) {
-        shopList = newShop.filter { entry ->
+
+        allItems = newShop.filter { entry ->
             val item = entry.brItems?.firstOrNull()
-            val hasImage = item?.images?.featured != null
-            hasImage
+            item?.images?.featured != null
+        }
+
+        sortBy(SortType.DATE)
+    }
+
+    fun sortBy(sortType: SortType) {
+        shopList = when (sortType) {
+            SortType.DATE -> {
+                allItems.sortedByDescending { entry ->
+                    entry.inDate
+                }
+            }
+            SortType.RARITY -> {
+                allItems.sortedByDescending { entry ->
+                    val rarityValue = entry.brItems?.firstOrNull()?.rarity?.value ?: "common"
+                    getRarityOrder(rarityValue)
+                }
+            }
+            SortType.PRICE -> {
+                allItems.sortedByDescending { entry ->
+                    entry.finalPrice
+                }
+            }
         }
         notifyDataSetChanged()
+    }
+
+    private fun getRarityOrder(rarity: String): Int {
+        return when (rarity.lowercase()) {
+            "mythic" -> 7
+            "exotic" -> 6
+            "legendary" -> 5
+            "epic" -> 4
+            "rare" -> 3
+            "uncommon" -> 2
+            "common" -> 1
+            else -> 0
+        }
     }
 
     private fun getRarityColor(rarity: String): Int {

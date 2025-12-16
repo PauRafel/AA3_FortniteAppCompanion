@@ -57,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun clearError() {
+        txtError.text = ""
         txtError.visibility = View.GONE
     }
 

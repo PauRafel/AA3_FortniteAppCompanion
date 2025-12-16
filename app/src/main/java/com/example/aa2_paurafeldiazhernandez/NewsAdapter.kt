@@ -33,10 +33,6 @@ class NewsAdapter(private var newsList: List<NewsItem>) :
 
         Glide.with(holder.itemView.context)
             .load(newsItem.image)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.ic_launcher_background)
-            .error(R.drawable.ic_launcher_foreground)
-            .centerCrop()
             .into(holder.imageView)
     }
 
