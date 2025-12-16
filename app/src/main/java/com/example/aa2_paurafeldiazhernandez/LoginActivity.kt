@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
@@ -25,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var emailField: EditText
     private lateinit var passwordField: EditText
     private lateinit var auth: FirebaseAuth
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var txtError: TextView
     private lateinit var txtRegister: TextView
 
@@ -46,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
         txtRegister = findViewById(R.id.txt_register)
 
         auth = FirebaseAuth.getInstance()
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         findViewById<Button>(R.id.btn_register).setOnClickListener{Register()}
         findViewById<Button>(R.id.btn_login).setOnClickListener{Login()}
@@ -82,6 +85,11 @@ class LoginActivity : AppCompatActivity() {
         if(requestCode == 9001){
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             if(task.isSuccessful){
+
+                val bundle = Bundle()
+                bundle.putString(FirebaseAnalytics.Param.METHOD, "google")
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+
                 val account = task.getResult(ApiException::class.java)
                 startActivity(Intent(this, HomeActivity::class.java))
             }
@@ -97,6 +105,11 @@ class LoginActivity : AppCompatActivity() {
 
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this) {task->
             if(task.isSuccessful){
+
+                val bundle = Bundle()
+                bundle.putString(FirebaseAnalytics.Param.METHOD, "email")
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle) //No lo muestra
+
                 clearError()
                 startActivity(Intent(this, HomeActivity::class.java))
             }else{
@@ -119,6 +132,11 @@ class LoginActivity : AppCompatActivity() {
 
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this) {task ->
             if (task.isSuccessful) {
+
+                val bundle = Bundle()
+                bundle.putString(FirebaseAnalytics.Param.METHOD, "email")
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
+
                 clearError()
                 showRegister("Register successful")
                 startActivity(Intent(this, HomeActivity::class.java))
