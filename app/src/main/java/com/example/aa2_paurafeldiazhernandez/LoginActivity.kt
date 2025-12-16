@@ -50,6 +50,10 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
+        if (auth.currentUser != null) {
+            startActivity(Intent(this, HomeActivity::class.java))
+        }
+
         findViewById<Button>(R.id.btn_register).setOnClickListener{Register()}
         findViewById<Button>(R.id.btn_login).setOnClickListener{Login()}
     }
