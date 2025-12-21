@@ -20,6 +20,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 
+
+ // Fragmento de perfil de usuario
+ // Muestra la información del usuario logueado y permite cambiar contraseña o cerrar sesión
+
 class ProfileActivity : Fragment() {
 
     private lateinit var auth: FirebaseAuth
@@ -74,9 +78,15 @@ class ProfileActivity : Fragment() {
         applyThemeToButtons()
     }
 
+
+    //Carga la información del usuario desde Firebase Auth o Google Sign-In
+    // Diferencia entre usuarios logueados con Google/email-password
+
     private fun loadUserInfo() {
         val firebaseUser = auth.currentUser
         val googleAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
+
+        // Muestra datos de Google si el usuario se logueó con Google
 
         if (googleAccount != null) {
             displayGoogleUserInfo(googleAccount)
@@ -86,6 +96,8 @@ class ProfileActivity : Fragment() {
             btnChangePassword.visibility = View.VISIBLE
         }
     }
+
+    // Muestra la información del perfil para usuarios de Google
 
     private fun displayGoogleUserInfo(account: GoogleSignInAccount) {
         txtUserName.text = account.displayName
@@ -99,12 +111,18 @@ class ProfileActivity : Fragment() {
         }
     }
 
+
+    // Muestra la información del perfil para usuarios de Firebase Auth (email/password)
+
     private fun displayFirebaseUserInfo(user: com.google.firebase.auth.FirebaseUser) {
         txtUserName.text = user.displayName
         txtUserEmail.text = user.email
         txtLoginMethod.text = "Logged in with: Email/Password"
         imgProfile.setImageResource(R.drawable.profile_image)
     }
+
+
+    // Muestra un diálogo para cambiar la contraseña del usuario
 
     private fun showChangePasswordDialog() {
         val dialogView = LayoutInflater.from(requireContext())
@@ -138,6 +156,10 @@ class ProfileActivity : Fragment() {
         dialog.show()
     }
 
+
+    // Valida que los campos de contraseña cumplan los requisitos
+    // Firebase requiere contraseñas de al menos 6 caracteres
+
     private fun validatePasswordInput(currentPassword: String, newPassword: String): Boolean {
         if (currentPassword.isEmpty()) {
             showError("Introduce your current password")
@@ -166,12 +188,17 @@ class ProfileActivity : Fragment() {
         txtError.visibility = View.GONE
     }
 
+    // Cambia la contraseña del usuario en Firebase Auth
+
     private fun changePassword(currentPassword: String, newPassword: String, dialog: AlertDialog) {
         val user = auth.currentUser
         val email = user?.email
 
         if (user != null && email != null) {
+            // Crea las credenciales con el email y contraseña actual
             val credential = EmailAuthProvider.getCredential(email, currentPassword)
+
+            // reauthenticate verifica que la contraseña actual sea correcta
 
             user.reauthenticate(credential)
                 .addOnSuccessListener {
@@ -187,8 +214,9 @@ class ProfileActivity : Fragment() {
     }
 
     private fun performSignOut() {
-        auth.signOut()
+        auth.signOut() // Cierra sesión de Firebase
 
+        // Cierra sesión de Google
         googleSignInClient.signOut().addOnCompleteListener(requireActivity()) {
             goToLoginActivity()
         }
