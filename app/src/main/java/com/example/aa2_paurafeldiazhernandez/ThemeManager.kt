@@ -28,16 +28,4 @@ object ThemeManager {
             ContextCompat.getColor(context, R.color.purple)
         }
     }
-
-    fun getPrimaryDarkColor(context: Context): Int {
-        return if (isBlueTheme(context)) {
-            ContextCompat.getColor(context, R.color.blue)
-        } else {
-            ContextCompat.getColor(context, R.color.purple)
-        }
-    }
-
-    fun getThemeName(context: Context): String {
-        return if (isBlueTheme(context)) "Blue" else "Purple"
-    }
 }

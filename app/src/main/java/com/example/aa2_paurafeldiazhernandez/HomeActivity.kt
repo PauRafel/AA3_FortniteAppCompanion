@@ -20,7 +20,6 @@ class HomeActivity : AppCompatActivity() {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
 
-        // Aplicar tema a barras
         applyThemeToBars()
 
         if (savedInstanceState == null) {
@@ -63,15 +62,9 @@ class HomeActivity : AppCompatActivity() {
 
     private fun applyThemeToBars() {
         val primaryColor = ThemeManager.getPrimaryColor(this)
-        val primaryDarkColor = ThemeManager.getPrimaryDarkColor(this)
 
-        // Aplicar color a Toolbar
         toolbar.setBackgroundColor(primaryColor)
-
-        // Aplicar color a Bottom Navigation
         bottomNavigationView.setBackgroundColor(primaryColor)
 
-        // Aplicar color a la status bar (barra superior del sistema)
-        window.statusBarColor = primaryDarkColor
     }
 }
