@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple">#481973</color>
+    <color name="blue">#77A3E7</color>
     <color name="rarity_common">#B0B0B0</color>
     <color name="rarity_uncommon">#5DBB3C</color>
     <color name="rarity_rare">#3F7FBF</color>

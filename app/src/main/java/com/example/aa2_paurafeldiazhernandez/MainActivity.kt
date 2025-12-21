@@ -22,11 +22,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+
         linearLayout = findViewById(R.id.main)
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }, SPLASH_DURATION)
+
+        applyThemeToSplash()
+    }
+
+    private fun applyThemeToSplash() {
+        val primaryColor = ThemeManager.getPrimaryColor(this)
+        linearLayout.setBackgroundColor(primaryColor)
 
     }
 

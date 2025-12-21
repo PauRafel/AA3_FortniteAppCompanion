@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -29,10 +30,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var txtError: TextView
     private lateinit var txtRegister: TextView
+    private lateinit var linearLayout: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("491085797124-ovgcgkh3tg7lm5dnjt960q6g16t79p5a.apps.googleusercontent.com")
@@ -46,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
         passwordField = findViewById(R.id.input_password)
         txtError = findViewById(R.id.txt_error)
         txtRegister = findViewById(R.id.txt_register)
+        linearLayout = findViewById(R.id.main)
 
         auth = FirebaseAuth.getInstance()
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
@@ -56,7 +61,17 @@ class LoginActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btn_register).setOnClickListener{Register()}
         findViewById<Button>(R.id.btn_login).setOnClickListener{Login()}
+
+        applyTheme()
     }
+
+    private fun applyTheme() {
+        val primaryColor = ThemeManager.getPrimaryColor(this)
+
+        linearLayout.setBackgroundColor(primaryColor)
+        
+    }
+
 
     private fun showError(msg: String) {
         txtError.text = msg

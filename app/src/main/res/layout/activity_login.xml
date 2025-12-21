@@ -60,6 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/fortnitefont"
+            android:backgroundTint="#8E8D8D"
             android:textSize="25dp"
             android:text="Register" />
 
@@ -68,6 +69,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="#8E8D8D"
             android:fontFamily="@font/fortnitefont"
             android:textSize="25dp"
             android:text="Login" />
