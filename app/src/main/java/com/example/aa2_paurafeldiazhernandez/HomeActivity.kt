@@ -9,24 +9,24 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
 
+        // Aplicar tema a barras
+        applyThemeToBars()
 
         if (savedInstanceState == null) {
             loadFragment(NewsActivity())
             supportActionBar?.title = "News"
         }
-
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -45,6 +45,11 @@ class HomeActivity : AppCompatActivity() {
                     loadFragment(ProfileActivity())
                     true
                 }
+                R.id.navigation_settings -> {
+                    supportActionBar?.title = "Settings"
+                    loadFragment(SettingsActivity())
+                    true
+                }
                 else -> false
             }
         }
@@ -54,5 +59,19 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.nav_host_fragment, fragment)
             .commit()
+    }
+
+    private fun applyThemeToBars() {
+        val primaryColor = ThemeManager.getPrimaryColor(this)
+        val primaryDarkColor = ThemeManager.getPrimaryDarkColor(this)
+
+        // Aplicar color a Toolbar
+        toolbar.setBackgroundColor(primaryColor)
+
+        // Aplicar color a Bottom Navigation
+        bottomNavigationView.setBackgroundColor(primaryColor)
+
+        // Aplicar color a la status bar (barra superior del sistema)
+        window.statusBarColor = primaryDarkColor
     }
 }
