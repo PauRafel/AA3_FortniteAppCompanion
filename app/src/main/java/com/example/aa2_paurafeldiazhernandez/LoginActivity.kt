@@ -21,6 +21,11 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 
+
+// Actividad de inicio de sesión
+// Permite login con email/password (Firebase Auth) o con Google Sign-In
+//También permite registrar nuevos usuarios
+
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -36,8 +41,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("491085797124-ovgcgkh3tg7lm5dnjt960q6g16t79p5a.apps.googleusercontent.com")
             .requestEmail()
@@ -52,9 +55,13 @@ class LoginActivity : AppCompatActivity() {
         txtRegister = findViewById(R.id.txt_register)
         linearLayout = findViewById(R.id.main)
 
+        // Inicializa Firebase Auth para manejar autenticación con email/password
         auth = FirebaseAuth.getInstance()
+        // Inicializa Firebase Analytics para registrar eventos de usuario
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
+        // Si ya hay un usuario autenticado, salta directamente a HomeActivity
+        // Evita que el usuario tenga que hacer login cada vez que abre la app
         if (auth.currentUser != null) {
             startActivity(Intent(this, HomeActivity::class.java))
         }
@@ -65,11 +72,12 @@ class LoginActivity : AppCompatActivity() {
         applyTheme()
     }
 
+
+    // Aplica el color del tema seleccionado al fondo de la pantalla
+
     private fun applyTheme() {
         val primaryColor = ThemeManager.getPrimaryColor(this)
-
         linearLayout.setBackgroundColor(primaryColor)
-        
     }
 
 
@@ -78,43 +86,55 @@ class LoginActivity : AppCompatActivity() {
         txtError.visibility = View.VISIBLE
     }
 
+
     private fun clearError() {
         txtError.text = ""
         txtError.visibility = View.GONE
     }
+
 
     private fun showRegister(msg: String) {
         txtRegister.text = msg
         txtRegister.visibility = View.VISIBLE
     }
 
+
     private fun clearRegister() {
         txtRegister.visibility = View.GONE
     }
 
 
+
+    // Lanza la actividad de selección de cuenta de Google
     private fun signIn(){
         val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, 9001)
+        startActivityForResult(signInIntent, 9001) // 9001 es el código de request para identificar esta operación
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        // Verifica que el resultado corresponda a la petición de Google Sign-In
         if(requestCode == 9001){
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             if(task.isSuccessful){
-
+                // Registra el evento de login en Firebase Analytics
+                // Útil para analizar el comportamiento de los usuarios
                 val bundle = Bundle()
                 bundle.putString(FirebaseAnalytics.Param.METHOD, "google")
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
 
+                // Obtiene la cuenta de Google del usuario
                 val account = task.getResult(ApiException::class.java)
                 startActivity(Intent(this, HomeActivity::class.java))
             }
         }
     }
 
+
+     // Realiza login con email y password usando Firebase Authentication
+     // Valida las credenciales del usuario contra la base de datos de Firebase
     private fun Login(){
         val email = emailField.text.toString()
         val password = passwordField.text.toString()
@@ -124,34 +144,39 @@ class LoginActivity : AppCompatActivity() {
 
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this) {task->
             if(task.isSuccessful){
-
+                // Registra el evento de login exitoso en Firebase Analytics
                 val bundle = Bundle()
                 bundle.putString(FirebaseAnalytics.Param.METHOD, "email")
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle) //No lo muestra
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
 
                 clearError()
                 startActivity(Intent(this, HomeActivity::class.java))
             }else{
+                // Si las credenciales son incorrectas, muestra error al usuario
                 showError("The email or password are incorrect")
             }
-
         }
     }
 
+
+     // Registra un nuevo usuario con email y password en Firebase Authentication
+     // Crea una nueva cuenta en la base de datos de usuarios de Firebase
     private fun Register(){
         val email = emailField.text.toString()
         val password = passwordField.text.toString()
 
         clearError()
 
+        // Firebase requiere contraseñas de al menos 6 caracteres
         if (password.length < 6) {
             showError("The password must have more than 6 characters")
             return
         }
 
+        // createUserWithEmailAndPassword crea el usuario en Firebase Auth
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this) {task ->
             if (task.isSuccessful) {
-
+                // Registra el evento de registro exitoso en Firebase Analytics
                 val bundle = Bundle()
                 bundle.putString(FirebaseAnalytics.Param.METHOD, "email")
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
@@ -160,11 +185,10 @@ class LoginActivity : AppCompatActivity() {
                 showRegister("Register successful")
                 startActivity(Intent(this, HomeActivity::class.java))
             } else {
+                // Firebase no permite duplicar emails, muestra error si ya existe
                 showError("It already exist a user with this email")
                 clearRegister()
             }
         }
-
     }
-
 }

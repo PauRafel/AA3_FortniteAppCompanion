@@ -19,6 +19,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
+ // Fragmento que muestra las noticias de Fortnite
+ //Obtiene los datos desde la API de Fortnite y los muestra en un RecyclerView
+
 class NewsActivity : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
@@ -37,20 +41,27 @@ class NewsActivity : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewNews)
 
+        // LinearLayoutManager muestra los items en una lista vertical
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        // Inicializa el adapter con una lista vacía hasta que lleguen los datos de la API
         adapter = NewsAdapter(emptyList())
         recyclerView.adapter = adapter
 
+        // Oculta el RecyclerView mientras se cargan los datos
         recyclerView.visibility = View.GONE
-
 
         fetchFortniteNews()
     }
 
+
+     //Realiza una petición HTTP a la API de Fortnite para obtener las noticias
+
     private fun fetchFortniteNews() {
+        // Obtiene la instancia singleton de la API y hace la petición
         val call = FortniteApiInstance.api.getNews("en")
 
         call.enqueue(object : Callback<FortniteResponse> {
+
             override fun onResponse(
                 call: Call<FortniteResponse>,
                 response: Response<FortniteResponse>
@@ -58,8 +69,12 @@ class NewsActivity : Fragment() {
                 recyclerView.visibility = View.VISIBLE
 
                 if (response.isSuccessful) {
+                    // Extrae las noticias del body de la respuesta
+                    // Devuelve una lista vacía si data o motds son null
                     val newsItems = response.body()?.data?.motds ?: emptyList()
 
+                    // Filtra solo las noticias que no están marcadas como ocultas
+                    // La API puede devolver noticias ocultas que no deben mostrarse
                     val visibleNews = newsItems.filter { !it.hidden }
 
                     if (visibleNews.isNotEmpty()) {
