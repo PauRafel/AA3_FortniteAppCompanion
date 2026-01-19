@@ -40,9 +40,8 @@
                 android:maxLines="2"
                 tools:text="..." />
 
-
             <TextView
-                android:id="@+id/textRarity"
+                android:id="@+id/textItemType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
