@@ -26,11 +26,11 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
         DATE, RARITY, PRICE
     }
 
-
     // ViewHolder que contiene las referencias a las vistas de cada item de la tienda
     class ShopViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imageShopItem)
         val nameView: TextView = view.findViewById(R.id.textItemName)
+        val typeView: TextView = view.findViewById(R.id.textItemType)
         val priceView: TextView = view.findViewById(R.id.textPrice)
     }
 
@@ -51,6 +51,7 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
 
         // Usa el nombre del item
         holder.nameView.text = item?.name
+        holder.typeView.text = item?.type?.displayValue ?: ""
         holder.priceView.text = "${shopEntry.finalPrice}"
 
         val rarityValue = item?.rarity?.value ?: "common"
@@ -77,7 +78,6 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
     }
 
     override fun getItemCount(): Int = shopList.size
-
 
     // Actualiza la lista completa de items de la tienda
 

@@ -1,33 +1,38 @@
 package com.example.aa2_paurafeldiazhernandez
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
+import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import FortniteApi.FortniteApiInstance
 import FortniteApi.FortniteShopResponse
+import FortniteApi.ShopEntry
 import com.google.firebase.analytics.FirebaseAnalytics
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
- // Fragmento que muestra la tienda de Fortnite
- // Obtiene los items disponibles desde la API y permite ordenarlos
-
+// Fragment que muestra la tienda de Fortnite con búsqueda integrada
 class ShopActivity : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ShopAdapter
-    private lateinit var firebaseAnalytics : FirebaseAnalytics
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var editSearch: EditText
+    private lateinit var progressBar: ProgressBar
+
+    private var allShopItems: List<ShopEntry> = emptyList()
+    private var filteredItems: List<ShopEntry> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Habilita el menú de opciones para este fragmento
-        // Para mostrar el menú en el toolbar
         setHasOptionsMenu(true)
-
     }
 
     override fun onCreateView(
@@ -42,52 +47,55 @@ class ShopActivity : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView = view.findViewById(R.id.recyclerViewShop)
+        editSearch = view.findViewById(R.id.edit_search)
+        progressBar = view.findViewById(R.id.progressBar)
+
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
-        // GridLayoutManager muestra los items en una cuadrícula de 2 columnas
+
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         adapter = ShopAdapter(emptyList())
         recyclerView.adapter = adapter
 
         recyclerView.visibility = View.GONE
 
+        editSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString().trim()
+                filterItems(query)
+            }
+        })
+
         fetchShop()
     }
 
-
-
-     // Muestra las opciones para ordenar (fecha, rareza, precio)
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_shop_sort, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
-
-
-     // Maneja los clicks en los items del menú
-     // Ordena los items de la tienda según la opción seleccionada
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.sort_by_date -> {
                 val bundle = Bundle()
                 bundle.putString("sort_type", "date")
-                FirebaseAnalytics.getInstance(requireContext())
-                    .logEvent("shop_sorted", bundle)
+                firebaseAnalytics.logEvent("shop_sorted", bundle)
                 adapter.sortBy(ShopAdapter.SortType.DATE)
                 true
             }
             R.id.sort_by_rarity -> {
                 val bundle = Bundle()
                 bundle.putString("sort_type", "rarity")
-                FirebaseAnalytics.getInstance(requireContext())
-                    .logEvent("shop_sorted", bundle)
+                firebaseAnalytics.logEvent("shop_sorted", bundle)
                 adapter.sortBy(ShopAdapter.SortType.RARITY)
                 true
             }
             R.id.sort_by_price -> {
                 val bundle = Bundle()
                 bundle.putString("sort_type", "price")
-                FirebaseAnalytics.getInstance(requireContext())
-                    .logEvent("shop_sorted", bundle)
+                firebaseAnalytics.logEvent("shop_sorted", bundle)
                 adapter.sortBy(ShopAdapter.SortType.PRICE)
                 true
             }
@@ -95,32 +103,72 @@ class ShopActivity : Fragment() {
         }
     }
 
-
-    // Realiza una petición HTTP a la API de Fortnite para obtener la tienda
-
+    // Obtiene la tienda usando el token de la API
     private fun fetchShop() {
-        val call = FortniteApiInstance.api.getShop("en")
+        progressBar.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+
+        val call = FortniteApiInstance.api.getShop(ApiConfig.FORTNITE_API_KEY, "en")
 
         call.enqueue(object : Callback<FortniteShopResponse> {
             override fun onResponse(
                 call: Call<FortniteShopResponse>,
                 response: Response<FortniteShopResponse>
             ) {
+                progressBar.visibility = View.GONE
                 recyclerView.visibility = View.VISIBLE
 
                 if (response.isSuccessful) {
-                    // Extrae las entradas de la tienda del body de la respuesta
-                    val shopEntries = response.body()?.data?.entries ?: emptyList()
+                    val shopEntries = response.body()?.data?.entries?.filter { entry ->
+                        val item = entry.brItems?.firstOrNull()
+                        item?.images?.featured != null || item?.images?.icon != null
+                    } ?: emptyList()
 
                     if (shopEntries.isNotEmpty()) {
-                        adapter.updateShop(shopEntries)
+                        allShopItems = shopEntries
+                        filteredItems = shopEntries
+                        adapter.updateShop(filteredItems)
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Loaded ${allShopItems.size} items",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error loading shop: ${response.code()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<FortniteShopResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 recyclerView.visibility = View.VISIBLE
+                Toast.makeText(
+                    requireContext(),
+                    "Connection error: ${t.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
+    }
+
+    private fun filterItems(query: String) {
+        filteredItems = if (query.isEmpty()) {
+            allShopItems
+        } else {
+            allShopItems.filter { entry ->
+                val item = entry.brItems?.firstOrNull()
+                item?.name?.contains(query, ignoreCase = true) == true ||
+                        item?.type?.displayValue?.contains(query, ignoreCase = true) == true ||
+                        item?.description?.contains(query, ignoreCase = true) == true
+            }
+        }
+
+        adapter.updateShop(filteredItems)
+
     }
 }
