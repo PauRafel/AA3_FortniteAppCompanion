@@ -11,6 +11,11 @@
         android:title="Shop" />
 
     <item
+        android:id="@+id/navigation_forum"
+        android:icon="@drawable/baseline_shopping_cart_24"
+        android:title="Forum" />
+
+    <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/baseline_person_24"
         android:title="Profile" />

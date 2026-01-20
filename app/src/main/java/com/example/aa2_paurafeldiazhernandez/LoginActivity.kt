@@ -20,11 +20,12 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 
 // Actividad de inicio de sesión
 // Permite login con email/password (Firebase Auth) o con Google Sign-In
-//También permite registrar nuevos usuarios
+// También permite registrar nuevos usuarios
 
 class LoginActivity : AppCompatActivity() {
 
@@ -64,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
         // Evita que el usuario tenga que hacer login cada vez que abre la app
         if (auth.currentUser != null) {
             startActivity(Intent(this, HomeActivity::class.java))
+            finish()
         }
 
         findViewById<Button>(R.id.btn_register).setOnClickListener{Register()}
@@ -74,7 +76,6 @@ class LoginActivity : AppCompatActivity() {
 
 
     // Aplica el color del tema seleccionado al fondo de la pantalla
-
     private fun applyTheme() {
         val primaryColor = ThemeManager.getPrimaryColor(this)
         linearLayout.setBackgroundColor(primaryColor)
@@ -118,23 +119,42 @@ class LoginActivity : AppCompatActivity() {
         // Verifica que el resultado corresponda a la petición de Google Sign-In
         if(requestCode == 9001){
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            if(task.isSuccessful){
-                // Registra el evento de login en Firebase Analytics
-                // Útil para analizar el comportamiento de los usuarios
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.METHOD, "google")
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
-
+            try {
                 // Obtiene la cuenta de Google del usuario
                 val account = task.getResult(ApiException::class.java)
-                startActivity(Intent(this, HomeActivity::class.java))
+
+                // Autenticar con Firebase usando el token de Google
+                firebaseAuthWithGoogle(account.idToken!!)
+
+            } catch (e: ApiException) {
+                Toast.makeText(this, "Google sign in failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    // Autentica con Firebase usando las credenciales de Google
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val bundle = Bundle()
+                    bundle.putString(FirebaseAnalytics.Param.METHOD, "google")
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
 
-     // Realiza login con email y password usando Firebase Authentication
-     // Valida las credenciales del usuario contra la base de datos de Firebase
+                    clearError()
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    finish()
+                } else {
+                    // Si la autenticación falla, muestra error al usuario
+                    showError("Google authentication failed")
+                }
+            }
+    }
+
+
+    // Realiza login con email y password usando Firebase Authentication
+    // Valida las credenciales del usuario contra la base de datos de Firebase
     private fun Login(){
         val email = emailField.text.toString()
         val password = passwordField.text.toString()
@@ -151,6 +171,7 @@ class LoginActivity : AppCompatActivity() {
 
                 clearError()
                 startActivity(Intent(this, HomeActivity::class.java))
+                finish()
             }else{
                 // Si las credenciales son incorrectas, muestra error al usuario
                 showError("The email or password are incorrect")
@@ -159,8 +180,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-     // Registra un nuevo usuario con email y password en Firebase Authentication
-     // Crea una nueva cuenta en la base de datos de usuarios de Firebase
+    // Registra un nuevo usuario con email y password en Firebase Authentication
+    // Crea una nueva cuenta en la base de datos de usuarios de Firebase
     private fun Register(){
         val email = emailField.text.toString()
         val password = passwordField.text.toString()
@@ -184,6 +205,7 @@ class LoginActivity : AppCompatActivity() {
                 clearError()
                 showRegister("Register successful")
                 startActivity(Intent(this, HomeActivity::class.java))
+                finish()
             } else {
                 // Firebase no permite duplicar emails, muestra error si ya existe
                 showError("It already exist a user with this email")
