@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Barra de búsqueda -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +27,6 @@
 
     </LinearLayout>
 
-    <!-- Progress Bar -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -37,7 +35,6 @@
         android:layout_marginTop="32dp"
         android:visibility="gone" />
 
-    <!-- RecyclerView para la tienda -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewShop"
         android:layout_width="match_parent"

@@ -10,6 +10,11 @@ data class FortniteShopResponse(
     val data: ShopData
 )
 
+data class ItemDetailResponse(
+    val status: Int,
+    val data: BrItem?
+)
+
 data class NewsData(
     val hash: String,
     val date: String,
