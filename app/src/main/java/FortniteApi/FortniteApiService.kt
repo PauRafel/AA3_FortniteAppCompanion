@@ -3,6 +3,7 @@ package FortniteApi
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FortniteApiService {
@@ -18,4 +19,11 @@ interface FortniteApiService {
         @Header("Authorization") apiKey: String,
         @Query("language") language: String = "en"
     ): Call<FortniteShopResponse>
+
+    @GET("v2/cosmetics/br/{id}")
+    fun getItemById(
+        @Header("Authorization") apiKey: String,
+        @Path("id") itemId: String,
+        @Query("language") language: String = "en"
+    ): Call<ItemDetailResponse>
 }

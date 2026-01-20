@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import FortniteApi.ShopEntry
+import android.content.Intent
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.util.*
@@ -74,6 +75,16 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
             Glide.with(holder.itemView.context)
                 .load(imageUrl)
                 .into(holder.imageView)
+        }
+
+        holder.itemView.setOnClickListener {
+            item?.let { brItem ->
+                val context = holder.itemView.context
+                val intent = Intent(context, ItemDetailActivity::class.java)
+                intent.putExtra("ITEM_ID", brItem.id)
+                intent.putExtra("ITEM_PRICE", shopEntry.finalPrice)
+                context.startActivity(intent)
+            }
         }
     }
 
