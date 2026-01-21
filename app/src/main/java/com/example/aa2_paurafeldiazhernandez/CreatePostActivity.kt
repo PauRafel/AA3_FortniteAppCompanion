@@ -75,10 +75,9 @@ class CreatePostActivity : AppCompatActivity() {
         btnPublish.setBackgroundColor(primaryColor)
     }
 
-    /**
-     * Publica un nuevo post en Firebase
-     * Genera un ID único y almacena todos los datos del post
-     */
+
+     // Publica un nuevo post en Firebase
+     // Genera un ID único y almacena todos los datos del post
     private fun publishPost() {
         val title = editTitle.text.toString().trim()
         val content = editContent.text.toString().trim()
@@ -96,7 +95,6 @@ class CreatePostActivity : AppCompatActivity() {
 
         showLoading(true)
 
-        // Obtener usuario actual
         val currentUser = auth.currentUser
         if (currentUser == null) {
             showLoading(false)
@@ -126,7 +124,6 @@ class CreatePostActivity : AppCompatActivity() {
         database.child("posts").child(postId).setValue(post)
             .addOnSuccessListener {
                 showLoading(false)
-                Toast.makeText(this, "Post published!", Toast.LENGTH_SHORT).show()
                 finish()
             }
             .addOnFailureListener { e ->

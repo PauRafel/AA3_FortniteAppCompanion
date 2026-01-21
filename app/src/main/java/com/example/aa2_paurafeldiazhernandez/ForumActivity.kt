@@ -151,8 +151,7 @@ class ForumActivity : Fragment() {
         }
 
         val primaryColor = ThemeManager.getPrimaryColor(requireContext())
-        fabCreatePost.backgroundTintList =
-            android.content.res.ColorStateList.valueOf(primaryColor)
+        fabCreatePost.backgroundTintList = android.content.res.ColorStateList.valueOf(primaryColor)
     }
 
     private fun showLoading(show: Boolean) {
