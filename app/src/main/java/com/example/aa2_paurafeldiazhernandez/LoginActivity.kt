@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlin.system.exitProcess
 
 
 // Actividad de inicio de sesión
@@ -33,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var emailField: EditText
     private lateinit var passwordField: EditText
     private lateinit var auth: FirebaseAuth
+    private lateinit var btnCloseApp: Button
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var txtError: TextView
     private lateinit var txtRegister: TextView
@@ -55,6 +57,8 @@ class LoginActivity : AppCompatActivity() {
         txtError = findViewById(R.id.txt_error)
         txtRegister = findViewById(R.id.txt_register)
         linearLayout = findViewById(R.id.main)
+        btnCloseApp = findViewById(R.id.btn_close_app)
+
 
         // Inicializa Firebase Auth para manejar autenticación con email/password
         auth = FirebaseAuth.getInstance()
@@ -70,6 +74,10 @@ class LoginActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btn_register).setOnClickListener{Register()}
         findViewById<Button>(R.id.btn_login).setOnClickListener{Login()}
+
+        btnCloseApp.setOnClickListener {
+            closeApplication()
+        }
 
         applyTheme()
     }
@@ -213,4 +221,10 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun closeApplication() {
+        finishAffinity()
+        exitProcess(0)
+    }
+
 }

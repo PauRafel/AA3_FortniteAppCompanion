@@ -23,6 +23,10 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
     // Lista completa de items, usada como fuente para ordenar
     private var allItems: List<ShopEntry> = emptyList()
 
+    private var dateSortAscending = false
+    private var raritySortAscending = false
+    private var priceSortAscending = false
+
     enum class SortType {
         DATE, RARITY, PRICE
     }
@@ -98,36 +102,54 @@ class ShopAdapter(private var shopList: List<ShopEntry>) :
             item?.images?.featured != null
         }
         // Ordena por fecha por defecto al cargar la tienda
-        sortBy(SortType.DATE)
+        dateSortAscending = false
+        shopList = allItems.sortedByDescending { it.inDate }
+        notifyDataSetChanged()
     }
 
 
     //  Ordena los items según el tipo especificado
     //  sortedByDescending ordena de mayor a menor (más reciente/raro/caro primero)
 
-    fun sortBy(sortType: SortType) {
-        shopList = when (sortType) {
+    fun sortBy(sortType: SortType): Boolean {
+        val isAscending = when (sortType) {
             SortType.DATE -> {
-                // Ordena por fecha de entrada a la tienda
-                allItems.sortedByDescending { entry ->
-                    entry.inDate
+                dateSortAscending = !dateSortAscending
+                shopList = if (dateSortAscending) {
+                    allItems.sortedBy { it.inDate }
+                } else {
+                    allItems.sortedByDescending { it.inDate }
                 }
+                dateSortAscending
             }
             SortType.RARITY -> {
-                // Ordena por rareza usando valores numéricos
-                allItems.sortedByDescending { entry ->
-                    val rarityValue = entry.brItems?.firstOrNull()?.rarity?.value ?: "common"
-                    getRarityOrder(rarityValue)
+                raritySortAscending = !raritySortAscending
+                shopList = if (raritySortAscending) {
+                    allItems.sortedBy { entry ->
+                        val rarityValue = entry.brItems?.firstOrNull()?.rarity?.value ?: "common"
+                        getRarityOrder(rarityValue)
+                    }
+                } else {
+                    allItems.sortedByDescending { entry ->
+                        val rarityValue = entry.brItems?.firstOrNull()?.rarity?.value ?: "common"
+                        getRarityOrder(rarityValue)
+                    }
                 }
+                raritySortAscending
             }
             SortType.PRICE -> {
-                // Ordena por precio en V-Bucks
-                allItems.sortedByDescending { entry ->
-                    entry.finalPrice
+                priceSortAscending = !priceSortAscending
+                shopList = if (priceSortAscending) {
+                    allItems.sortedBy { it.finalPrice }
+                } else {
+                    allItems.sortedByDescending { it.finalPrice }
                 }
+                priceSortAscending
             }
         }
-        notifyDataSetChanged() // Notifica al RecyclerView que los datos cambiaron
+
+        notifyDataSetChanged()
+        return isAscending
     }
 
 

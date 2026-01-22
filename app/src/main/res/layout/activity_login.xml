@@ -92,7 +92,7 @@
         android:id="@+id/txt_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#008f39 "
+        android:textColor="#008f39"
         android:textSize="30dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/fortnitefont"
@@ -107,5 +107,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="50dp" />
+
+    <Button
+        android:id="@+id/btn_close_app"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="150dp"
+        android:backgroundTint="#8E8D8D"
+        android:fontFamily="@font/fortnitefont"
+        android:text="Close App"
+        android:textSize="25dp" />
 
 </LinearLayout>
