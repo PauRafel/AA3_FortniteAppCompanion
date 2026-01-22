@@ -29,6 +29,7 @@ class ShopActivity : Fragment() {
 
     private var allShopItems: List<ShopEntry> = emptyList()
     private var filteredItems: List<ShopEntry> = emptyList()
+    private var currentMenu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,34 +74,49 @@ class ShopActivity : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_shop_sort, menu)
+        currentMenu = menu
+        updateMenuIcon(R.id.sort_by_date, false)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.sort_by_date -> {
-                val bundle = Bundle()
-                bundle.putString("sort_type", "date")
-                firebaseAnalytics.logEvent("shop_sorted", bundle)
-                adapter.sortBy(ShopAdapter.SortType.DATE)
+                val isAscending = adapter.sortBy(ShopAdapter.SortType.DATE)
+                updateMenuIcon(R.id.sort_by_date, isAscending)
+                logSortEvent("date", isAscending)
                 true
             }
             R.id.sort_by_rarity -> {
-                val bundle = Bundle()
-                bundle.putString("sort_type", "rarity")
-                firebaseAnalytics.logEvent("shop_sorted", bundle)
-                adapter.sortBy(ShopAdapter.SortType.RARITY)
+                val isAscending = adapter.sortBy(ShopAdapter.SortType.RARITY)
+                updateMenuIcon(R.id.sort_by_rarity, isAscending)
+                logSortEvent("rarity", isAscending)
                 true
             }
             R.id.sort_by_price -> {
-                val bundle = Bundle()
-                bundle.putString("sort_type", "price")
-                firebaseAnalytics.logEvent("shop_sorted", bundle)
-                adapter.sortBy(ShopAdapter.SortType.PRICE)
+                val isAscending = adapter.sortBy(ShopAdapter.SortType.PRICE)
+                updateMenuIcon(R.id.sort_by_price, isAscending)
+                logSortEvent("price", isAscending)
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun updateMenuIcon(itemId: Int, isAscending: Boolean) {
+        currentMenu?.findItem(itemId)?.icon = if (isAscending) {
+            requireContext().getDrawable(android.R.drawable.arrow_up_float)
+        } else {
+            requireContext().getDrawable(android.R.drawable.arrow_down_float)
+        }
+    }
+    private fun logSortEvent(sortType: String, isAscending: Boolean) {
+        val bundle = Bundle().apply {
+            putString("sort_type", sortType)
+            putString("sort_direction", if (isAscending) "ascending" else "descending")
+            putBoolean("is_ascending", isAscending)
+        }
+        firebaseAnalytics.logEvent("shop_sorted", bundle)
     }
 
     // Obtiene la tienda usando el token de la API

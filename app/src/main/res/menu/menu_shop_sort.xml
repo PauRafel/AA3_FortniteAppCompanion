@@ -11,15 +11,21 @@
         <menu>
             <item
                 android:id="@+id/sort_by_date"
-                android:title="Date" />
+                android:title="Date"
+                android:icon="@android:drawable/arrow_down_float"
+                app:showAsAction="ifRoom" />
 
             <item
                 android:id="@+id/sort_by_rarity"
-                android:title="Rarity" />
+                android:title="Rarity"
+                android:icon="@android:drawable/arrow_down_float"
+                app:showAsAction="ifRoom" />
 
             <item
                 android:id="@+id/sort_by_price"
-                android:title="Price" />
+                android:title="Price"
+                android:icon="@android:drawable/arrow_down_float"
+                app:showAsAction="ifRoom" />
         </menu>
 
     </item>
