@@ -146,9 +146,10 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    val bundle = Bundle()
-                    bundle.putString(FirebaseAnalytics.Param.METHOD, "google")
-                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                    val bundle = Bundle().apply {
+                        putString("method", "google")
+                    }
+                    firebaseAnalytics.logEvent("login_google", bundle)
 
                     clearError()
                     startActivity(Intent(this, HomeActivity::class.java))
@@ -173,9 +174,10 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this) {task->
             if(task.isSuccessful){
                 // Registra el evento de login exitoso en Firebase Analytics
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.METHOD, "email")
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                val bundle = Bundle().apply {
+                    putString("method", "email")
+                }
+                firebaseAnalytics.logEvent("login_email", bundle)
 
                 clearError()
                 startActivity(Intent(this, HomeActivity::class.java))
@@ -205,11 +207,6 @@ class LoginActivity : AppCompatActivity() {
         // createUserWithEmailAndPassword crea el usuario en Firebase Auth
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this) {task ->
             if (task.isSuccessful) {
-                // Registra el evento de registro exitoso en Firebase Analytics
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.METHOD, "email")
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
-
                 clearError()
                 showRegister("Register successful")
                 startActivity(Intent(this, HomeActivity::class.java))
