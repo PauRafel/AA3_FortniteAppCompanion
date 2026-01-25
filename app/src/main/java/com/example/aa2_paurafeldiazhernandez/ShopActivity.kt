@@ -110,13 +110,20 @@ class ShopActivity : Fragment() {
             requireContext().getDrawable(android.R.drawable.arrow_down_float)
         }
     }
+
+
+    // Registra eventos específicos de ordenamiento en Firebase Analytics
     private fun logSortEvent(sortType: String, isAscending: Boolean) {
+        val direction = if (isAscending) "asc" else "desc"
+        val eventName = "shop_sorted_${sortType}_${direction}"
+
         val bundle = Bundle().apply {
             putString("sort_type", sortType)
-            putString("sort_direction", if (isAscending) "ascending" else "descending")
-            putBoolean("is_ascending", isAscending)
+            putString("direction", direction)
+            putLong("item_count", filteredItems.size.toLong())
         }
-        firebaseAnalytics.logEvent("shop_sorted", bundle)
+
+        firebaseAnalytics.logEvent(eventName, bundle)
     }
 
     // Obtiene la tienda usando el token de la API
@@ -185,6 +192,5 @@ class ShopActivity : Fragment() {
         }
 
         adapter.updateShop(filteredItems)
-
     }
 }
