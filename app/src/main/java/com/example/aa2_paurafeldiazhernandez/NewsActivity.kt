@@ -57,11 +57,9 @@ class NewsActivity : Fragment() {
      //Realiza una petición HTTP a la API de Fortnite para obtener las noticias
 
     private fun fetchFortniteNews() {
-        // Obtiene la instancia singleton de la API y hace la petición
-        val call = FortniteApiInstance.api.getNews("en")
+        val call = FortniteApiInstance.api.getNews(ApiConfig.FORTNITE_API_KEY, "en")
 
         call.enqueue(object : Callback<FortniteResponse> {
-
             override fun onResponse(
                 call: Call<FortniteResponse>,
                 response: Response<FortniteResponse>
@@ -69,12 +67,7 @@ class NewsActivity : Fragment() {
                 recyclerView.visibility = View.VISIBLE
 
                 if (response.isSuccessful) {
-                    // Extrae las noticias del body de la respuesta
-                    // Devuelve una lista vacía si data o motds son null
                     val newsItems = response.body()?.data?.motds ?: emptyList()
-
-                    // Filtra solo las noticias que no están marcadas como ocultas
-                    // La API puede devolver noticias ocultas que no deben mostrarse
                     val visibleNews = newsItems.filter { !it.hidden }
 
                     if (visibleNews.isNotEmpty()) {

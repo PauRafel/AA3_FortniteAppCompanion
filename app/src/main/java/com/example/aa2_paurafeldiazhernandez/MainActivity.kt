@@ -13,7 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 
-  // Splash Screen - Primera actividad que se muestra al abrir la app
+  // Primera actividad que se muestra al abrir la app
   // Muestra una pantalla de bienvenida durante 3 segundos antes de ir al login
 
 class MainActivity : AppCompatActivity() {
@@ -35,9 +35,6 @@ class MainActivity : AppCompatActivity() {
         applyThemeToSplash()
     }
 
-    /**
-     * Aplica el color del tema seleccionado al fondo del splash screen
-     */
     private fun applyThemeToSplash() {
         val primaryColor = ThemeManager.getPrimaryColor(this)
         linearLayout.setBackgroundColor(primaryColor)

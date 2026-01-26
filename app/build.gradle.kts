@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.converterGson)
     implementation(libs.googleid)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -74,6 +75,11 @@ dependencies {
     // Glide para cargar imágenes
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+    // Lifecycle (para ViewModel y LiveData si las usas)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

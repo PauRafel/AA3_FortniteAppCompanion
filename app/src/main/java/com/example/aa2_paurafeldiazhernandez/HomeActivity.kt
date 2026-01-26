@@ -47,6 +47,11 @@ class HomeActivity : AppCompatActivity() {
                     loadFragment(ShopActivity())
                     true
                 }
+                R.id.navigation_forum -> {
+                    supportActionBar?.title = "Forum"
+                    loadFragment(ForumActivity())
+                    true
+                }
                 R.id.navigation_profile -> {
                     supportActionBar?.title = "Profile"
                     loadFragment(ProfileActivity())
